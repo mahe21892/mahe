@@ -18,6 +18,8 @@
    </head>
    <body>
    <?php
+
+         include('connect.php');
       if( isset($_GET["firstname"]) && isset($_GET["lastname"] ) && isset($_GET["designation"])){
        
        $firstname= $_GET["firstname"];
