@@ -1,3 +1,13 @@
+<?php session_start(); ?>
+ 
+<?php
+if(!isset($_SESSION['valid'])) {
+    header('Location: login.php');
+}
+
+
+?>
+
 <!DOCTYPE html>
  <html>
   <head>
@@ -52,6 +62,7 @@
                  </select>
                  <br>
       <input type="submit" value="Create" onclick="get('id')">
+      <a clas"button" href="frontpage.php">Cancel</a>
       
                 </form>
                 </div>

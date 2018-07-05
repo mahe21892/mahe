@@ -1,11 +1,15 @@
 <?php
+  session_start();
+            if(!isset($_SESSION['valid'])) {
+               header('Location: login.php');
+            }
 require_once("connect.php");
 require('fpdf/fpdf.php');
 
 // code for print Heading of tables
 $display_heading = array('id'=>'ID', 'firstname'=> 'First Name', 'lastname'=> 'Last Name','designation'=> 'Designation',);
 
-$result = mysqli_query($conn, "SELECT * FROM employee") or die("database error:". mysqli_error($conn));
+$result = mysqli_query($conn, "SELECT id,firstname,lastname,designation FROM employee WHERE user_name='".$_SESSION['valid']."'") or die("database error:". mysqli_error($conn));
 $header = mysqli_query($conn, "SHOW columns FROM employee");
 class PDF extends FPDF
 {
@@ -46,8 +50,10 @@ $pdf->setTitle("Employee List");
 $pdf->AliasNbPages();
 
 foreach($header as $heading) {
-$pdf->Cell(48,15,$display_heading[$heading['Field']],1);
-$pdf->SetFont('Arial','B',10);
+    if($heading['Field']!="user_name"){
+        $pdf->Cell(48,15,$display_heading[$heading['Field']],1);
+        $pdf->SetFont('Arial','B',10);
+    }
 }
 foreach($result as $row) {
 $pdf->Ln();

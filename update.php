@@ -17,18 +17,35 @@
    </style>
    </head>
    <body>
+            <?php session_start(); ?>
+ 
+           <?php
+            if(!isset($_SESSION['valid'])) {
+               header('Location: login.php');
+            }
+        ?>
+
    <?php
 
          include('connect.php');
-      if( isset($_GET["firstname"]) && isset($_GET["lastname"] ) && isset($_GET["designation"])){
+     
+         $id= $_GET["id"];
+        $page=$_GET["page"];
+
+        $results=mysqli_query($conn, "SELECT * FROM employee WHERE id='$id'");
+
+           while ($row = mysqli_fetch_array($results)){
+            $firstname=$row['firstname'];
+            $lastname=$row['lastname'];
+            $designation=$row['designation'];
+           }
+
+
+
+
+
+        # if( isset($_GET["firstname"]) && isset($_GET["lastname"] ) && isset($_GET["designation"])){
        
-       $firstname= $_GET["firstname"];
-       $lastname= $_GET["lastname"];
-       $designation= $_GET["designation"];
-       $id= $_GET["id"];
-       $page=$_GET["page"];
-       
-     }
      ?>
     <div id="demo">
       <form action="update1.php" method="post">

@@ -31,6 +31,20 @@
     color: white;
     font-weight: bold;
 }
+
+   .logout{
+    position: absolute;
+    top: 38px;
+    right: 31px;
+    font-size: 18px;
+  }
+
+  .image{
+    position: absolute;
+    top: 28px;
+    right: 138px;
+    font-size: 18px;
+  }
 }
 </style>
 
@@ -44,14 +58,11 @@
     for (var i = 0; i < radioButtons.length; i++) {
         if (radioButtons[i].checked) {
           var empId = radioButtons[i].value;
-            select=true; 
-          var firstname=document.getElementById("row"+empId).cells[2].innerHTML;
-          var lastname=document.getElementById("row"+empId).cells[3].innerHTML;
-          var designation=document.getElementById("row"+empId).cells[4].innerHTML;
+            select=true;
         }
       }
           if(select)
-            document.location.href='update.php?page='+curpage+'& id='+empId+'& firstname='+firstname+'& lastname='+lastname+'& designation='+designation;
+            document.location.href='update.php?page='+curpage+'& id='+empId;
             else
                alert("Please select the any one record");
       }
@@ -75,10 +86,25 @@ function myFunction1() {
 }
 
  </script>
+       
+
 
 </head>
 <body>
+    <?php session_start(); ?>
+ 
+<?php
+if(!isset($_SESSION['valid'])) {
+    header('Location: login.php');
+}
+
+?>
+
+  
   <?php
+
+
+
 
     // PAGINATION VARIABLES
     // page is the current page, if there's nothing set, default is page 1
@@ -90,45 +116,55 @@ function myFunction1() {
     // calculate for the query LIMIT clause
     $from_record_num = ($records_per_page * $page) - $records_per_page;
   ?>
+  
 <div id="content">
+
 <h2> Employee Details</h2>
    <div style="padding-bottom:25px"> 
-       <a  class="button" href="create.php">Create</a>
-       <a class="button" href="javascript:myFunction()">EDIT</a>
-       <a class="button" href="javascript:myFunction1()">Delete</a>
-        <a  class="button" href="generatePDF.php" target="_blank">Report</a>
+
+        <div class="image">
+          <?php echo $_SESSION['image'];?>
+        </div>
+
+        <div class="logout">
+           <a  class="button" href="login.php?action=logout">logout</a>
+         </div>
+         <a  class="button" href="create.php">Create</a>
+         <a class="button" href="javascript:myFunction()">EDIT</a>
+         <a class="button" href="javascript:myFunction1()">Delete</a>
+          <a  class="button" href="generatePDF.php" target="_blank">Report</a>
 
        
       </div>
       <input type="hidden" id="currentpage" value="<?php echo $page;?>"/>
  <div>
      <?php include('connect.php'); ?>
-   <?php $results = mysqli_query($conn, "SELECT * FROM employee limit $from_record_num,$records_per_page "); ?>
+   <?php $results = mysqli_query($conn, "SELECT * FROM employee WHERE user_name='".$_SESSION['valid'] ."'limit $from_record_num,$records_per_page "); ?>
     <table class="table">
      <thead>
        <tr>
         <th> </th>
-        <th>ID</th>
         <th>First Name</th>
         <th>Last Name</th>
         <th>Designation</th>
         </tr>
       </thead>
 
-      <?php while ($row = mysqli_fetch_array($results)) { ?>
+      <?php 
+    if(!empty($results)){
+      while ($row = mysqli_fetch_array($results)) { ?>
       <tr id="<?php echo "row".$row['id'];?>">
         <td><input type="radio" name="radiobtn" value="<?php echo $row['id'];?>"></td>
-        <td><?php echo $row['id']; ?></td>
         <td><?php echo $row['firstname']; ?></td>
         <td><?php echo $row['lastname']; ?></td>
         <td><?php echo $row['designation']; ?></td>
     </tr>
-  <?php } ?>
+  <?php } }?>
       </table>
 
       <?php 
         
-        $result=mysqli_query($conn,"SELECT count(*) as total_rows from employee");
+        $result=mysqli_query($conn,"SELECT count(*) as total_rows from employee WHERE user_name='".$_SESSION['valid'] ."'");
         $data=mysqli_fetch_assoc($result);
         $total_rows =$data['total_rows'];
 
